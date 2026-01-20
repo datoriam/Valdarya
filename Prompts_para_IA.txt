@@ -1,0 +1,10 @@
+ Prompt 1 """""""""""
+ "A biblioteca libGDX foi usada e a partir dela criada o escopo para o projeto de um RPG em Java. Basta apenas colocar a pasta criada no Github para ser o esqueleto do projeto?". Nesse prompt, anexamos o arquivo "COMP0395___Projeto.pdf". 
+"""""""""""""""""""""""""""""""""""""
+Resposta """""""""""
+ "A biblioteca libGDX foi usada e a partir dela criada o escopo para o projeto de um RPG em Java. Basta apenas colocar a pasta criada no Github para ser o esqueleto do projeto?". Nesse prompt, anexamos o arquivo "COMP0395___Projeto.pdf". 
+"Inicialize o Git corretamente: Não use a função de 'upload files' do site do GitHub. Use o terminal ou um cliente Git (git init, git add ., git commit).
+Verifique o .gitignore: Garanta que pastas como /build, /.gradle e /.idea ou /.settings estejam ignoradas.
+Teste o Clone: Antes de avisar o grupo, tente clonar o repositório em outra pasta e rodar o comando de execução (ex: gradlew desktop:run) para garantir que ele roda em um ambiente limpo.
+Divida Tarefas: Como o grupo é de até 4 pessoas, dividam quem vai criar a classe Combatente, quem vai fazer a Arena, etc., para que todos tenham commits."
+""""""""""""""""""""""""""""""""""""""""
