@@ -8,3 +8,4 @@ Verifique o .gitignore: Garanta que pastas como /build, /.gradle e /.idea ou /.s
 Teste o Clone: Antes de avisar o grupo, tente clonar o repositório em outra pasta e rodar o comando de execução (ex: gradlew desktop:run) para garantir que ele roda em um ambiente limpo.
 Divida Tarefas: Como o grupo é de até 4 pessoas, dividam quem vai criar a classe Combatente, quem vai fazer a Arena, etc., para que todos tenham commits."
 """"""""""""""""""""""""""""""""""""""""
+teste
