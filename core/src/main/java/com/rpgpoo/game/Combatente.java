@@ -1,5 +1,5 @@
-package com.rpgpoo.game
+package com.rpgpoo.game;
 
-public class abstract Combatente {
+public class Combatente {
   //(Código vai aqui)
 }
