@@ -1,4 +1,6 @@
 package com.rpgpoo.game;
+import java.security.Guard;
+import java.util.Scanner;
 
 public abstract class Combatente {
     private String nome;
@@ -26,6 +28,31 @@ public abstract class Combatente {
     public int getNivel(){return nivel;}
     public int getVidaAtual(){return vidaAtual;}
     public int getVidaTotal(){return vidaTotal;}
+
+    public static Combatente criarPersonagem(){
+        Scanner sc = new Scanner(System.in);
+
+        System.out.println("Digite o nome do seu personagem: ");
+        String nomePersonagem = sc.nextLine();
+
+        System.out.println("Escolha uma classe: ");
+        System.out.println("1 - Arcanista ");
+        //System.out.println("2 - Guardião ");
+        int escolha = sc.nextInt();
+
+        Combatente personagem = null;
+
+        switch(escolha){
+            case 1:
+                personagem = new Arcanista(nomePersonagem);
+                break;
+            /*case 2:
+                personagem = new Guardiao(nomePersonagem);
+                break;*/
+            default: System.out.println("Escolha inválida!");
+        }
+        return personagem;
+    }
 
     public boolean checaVida(){
         return vidaAtual > 0;
