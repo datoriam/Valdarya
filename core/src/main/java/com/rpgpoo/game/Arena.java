@@ -4,33 +4,36 @@ import com.badlogic.gdx.ApplicationAdapter;
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.graphics.glutils.ShapeRenderer;
 import com.badlogic.gdx.graphics.GL20;
+import com.badlogic.gdx.graphics.OrthographicCamera;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Random;
+ 
 public class Arena extends ApplicationAdapter {
-    int x = 50;
-    int y = 50;
-    int xSpeed = 5;
-    int ySpeed;
-    int size;
-    ShapeRenderer shape;
+    
+    // parte do campo e da câmera
+    private ShapeRenderer shape;
+    private OrthographicCamera camera;
 
-    @Override
-    public void create () {
-        shape = new ShapeRenderer();
+    private List<Combatente> timeA;
+    private List<Combatente> timeB;
+
+    private Random random; //gera aleatoriedade
+
+    public Arena () {
+        this.timeA = new ArrayList<>();
+        this.timeB = new ArrayList<>();
+        this.random = new Random();
     }
 
-    @Override
-    public void render () {
-        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
-        x += 5;
-        shape.begin(ShapeRenderer.ShapeType.Filled);
-        shape.circle(x, y, 50);
-        shape.end();
-        x += xSpeed;
-        if (x > Gdx.graphics.getWidth()) {
-            xSpeed = -5;
-        }
-        if (x < 0){
-            xSpeed = 5;
+    public void adicionarCombatente(Combatente c, String time) {
+        if (time.equalsIgnoreCase("A")){
+            time.add A(c);
+        } else if (time.equalsIgnoreCase("B")) {
+            time.add B(c);
+        } else {
+            System.out.println(" Time inválido! Use A ou B! ");
         }
     }
 }
