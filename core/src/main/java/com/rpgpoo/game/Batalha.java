@@ -3,6 +3,7 @@ package com.rpgpoo.game;
 import java.util.Random;
 
 public class Batalha {
+    public String mensagemAtual;
     private int andarAtual;
     private boolean turnoChoose;
     private Combatente heroi;
@@ -12,44 +13,48 @@ public class Batalha {
         this.heroi = heroi;
         this.inimigo = inimigo;
         this.andarAtual = andarAtual;
+        mensagemAtual = "";
     }
+
+    public String getMensagemAtual(){ return this.mensagemAtual; }
 
     public void iniciar() {
         turnoChoose = new Random().nextBoolean();
-        do {executarTurno();} while (!terminou());
     }
 
     public void executarTurno() {
-        if (turnoChoose){
-            System.out.println("É a vez de " + heroi.getNome() + "!");
-            heroi.atacar(inimigo);
+        if(terminou()){
+            return;
+        }
+        else if (turnoChoose) {
+            if(heroi.processaStatus()) {
+                heroi.atacar(inimigo);
+                this.mensagemAtual = heroi.getMensagem();
+            }
         }
         else{
-            System.out.println("É a vez de " + inimigo.getNome() + "!");
-            inimigo.atacar(heroi);
+            if(heroi.processaStatus()) {
+                inimigo.atacar(heroi);
+                this.mensagemAtual = inimigo.getMensagem();
+            }
         }
         proximoTurno();//Por enquanto não terá a opção pra escolher qual dos alvos gerados o combatente pode atacar
     }
 
     public boolean terminou() {
-        if(inimigo.getVidaAtual() <= 0){
-            System.out.println(heroi.getNome() + " venceu!");
+        if (!inimigo.checaVida()) {
+            mensagemAtual = heroi.getNome() + " venceu!";
+            andarAtual++;
+            return true;
+        } else if (!heroi.checaVida()) {
+            mensagemAtual = heroi.getNome() + " perdeu!";
             return true;
         }
-        else if(heroi.getVidaAtual() <= 0){
-            System.out.println(heroi.getNome() + " perdeu!");
-            return true;
-        } else {
-            return false;
-        }
+        return false;
     }
 
     public void proximoTurno() {
         turnoChoose = !turnoChoose;
         }
 
-    public void mostrarEstado() {
-        // precisa saber atributos dos combatentes (vida, mana, etc.)
-    }
 }
-

@@ -29,16 +29,26 @@ public class Arcanista extends Combatente {
         }
         alvo.receberDano(this.getDano());
 
-        System.out.println(this.getNome() + " está sem mana ele vai atacar fisicamente enquanto está nesse estado");
+        setMensagem(this.getNome() + " está sem mana ele vai atacar fisicamente enquanto está nesse estado");
 
     }
 
     private void lancarFeitico(Combatente alvo){
         this.manaAtual -= custoFeitico;
         int danoMagico = this.getDano() * multiplicadorMagia;
-        System.out.println(this.getNome() + " está lançando o feitiço!!");
-        System.out.println("A mana atual de " + getNome() + " é " + this.manaAtual);
-        alvo.receberDano(danoMagico);
+        setMensagem(this.getNome() + " está lançando o feitiço! Dano causado: " + getDano() + "\n A mana atual de " + getNome() + " é " + this.manaAtual);
+        //para aplicar o sleep
+        //corrigi pra ação de efeito mágico funcionar depois de atacar
+        if(this.getNivel() >= 5) {
+            alvo.receberDano(danoMagico);
+            alvo.aplicarSono();
+        } else if (this.getNivel() >= 6) {
+            alvo.receberDano(danoMagico);
+            alvo.queimarInimigo();
+        } else {
+
+            alvo.receberDano(danoMagico);
+        }
     }
 
     @Override
@@ -46,6 +56,7 @@ public class Arcanista extends Combatente {
 
         if(this.manaMaxima >= custoFeitico) {
             lancarFeitico(alvo);
+
         } else {
             meditar(alvo);
         }
@@ -59,7 +70,7 @@ public class Arcanista extends Combatente {
         this.manaMaxima += 20;
         this.manaAtual = this.manaMaxima;
 
-        System.out.println(this.getNome() + "Aumentou de nível!. Mana Máxima" + this.manaMaxima);
+        setMensagem(this.getNome() + " aumentou de nível! Mana Máxima = " + this.manaMaxima);
     }
 
 
