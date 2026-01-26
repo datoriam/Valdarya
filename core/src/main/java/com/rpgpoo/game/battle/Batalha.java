@@ -112,18 +112,19 @@ public class Batalha {
 
     public boolean terminou() {
         if (!inimigo.checaVida()) {
+            // Mensagem de vitória
             mensagemAtual = heroi.getNome() + " VENCEU! Andar " + andarAtual + " completo!";
-            //andarAtual++;
+            // Chamando o método de xp
+            // Nicolas: Chamada do método de XP que o Davi implementou no Combatente.java
+            // Isso vai disparar automaticamente o subirNivel() e o seu evoluirStats() no Atirador.
+            heroi.ganharXP(50); 
+            
             return true;
         } else if (!heroi.checaVida()) {
             mensagemAtual = heroi.getNome() + " PERDEU! Fim da jornada...";
             return true;
         }
         return false;
-    }
-
-    public void proximoTurno() {
-        turnoChoose = !turnoChoose;
     }
 
     // Método para obter status atual dos combatentes
