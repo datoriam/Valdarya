@@ -8,6 +8,21 @@ import java.util.List;
 import java.util.Random;
 
 public class Batalha {
+    /** -Nicolas
+ * Método auxiliar para controle de Game Over.
+ * Verifica se todos os heróis do time A estão mortos.
+ * 
+ * Regra:
+ * - Se existir pelo menos um herói vivo, o jogo continua
+ * - Game **/
+    private boolean timeATodoMorto() {
+    for (Combatente c : timeA) {
+        if (c.checaVida()) { // ainda está vivo
+            return false;
+        }
+    }
+    return true;
+}
     public String mensagemAtual;
     private int andarAtual;
     private boolean turnoChoose; // true = Vez do Heroi, false = Vez do Inimigo
