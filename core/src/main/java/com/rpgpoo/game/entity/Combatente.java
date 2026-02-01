@@ -8,124 +8,88 @@ public abstract class Combatente {
     private int nivel;
     private int dano;
     private int xp;
+
+    // Status básicos - Implementação de efeitos (veneno, sono) deve ser feita na Batalha ou aqui
     private boolean dormindo = false;
     private boolean queimando = false;
+    private boolean envenenado = false;
 
     public Combatente (String nome, int vidaTotal, int danoBase) {
         this.nome = nome;
         this.vidaTotal = vidaTotal;
         this.vidaAtual = vidaTotal;
-        this.nivel = 5;
+        this.nivel = 5; // Nível inicial para testes
         this.dano = danoBase;
         this.xp = 0;
-        this.mensagem = ""; // Inicializa mensagem vazia
+        this.mensagem = "";
     }
 
     public void atacar(Combatente alvo){
-        // Limpa mensagem antes de cada ataque
         setMensagem("");
-
         String mensagemAtaque = getNome() + " atacou e causou " + getDano() + " de dano";
         setMensagem(mensagemAtaque);
         alvo.receberDano(getDano());
     }
 
-    protected void evoluirStats(){};
+    // Método abstrato forçando subclasses a implementarem sua própria evolução
+    protected abstract void evoluirStats();
 
+    // Gets e Sets básicos...
     public void setMensagem(String msg){
-        if (this.mensagem == null || this.mensagem.isEmpty()) {
-            this.mensagem = msg;
-        } else {
-            this.mensagem += "\n" + msg;
-        }
+        if (this.mensagem == null || this.mensagem.isEmpty()) this.mensagem = msg;
+        else this.mensagem += "\n" + msg;
     }
+    public void limparMensagem() { this.mensagem = ""; }
+    public String getMensagem() { return mensagem; }
 
-    // Novo método para limpar mensagens
-    public void limparMensagem() {
-        this.mensagem = "";
-    }
-
-    public String getMensagem() {
-        String msg = mensagem;
-        mensagem = ""; // Limpa após pegar (opcional)
-        return msg;
-    }
-
-    // Resto dos métodos permanece igual...
     public String getNome(){return nome;}
     public int getDano(){return dano;}
     public int getNivel(){return nivel;}
     public int getVidaAtual(){return vidaAtual;}
     public int getVidaTotal(){return vidaTotal;}
 
-    public boolean checaVida(){
-        return vidaAtual > 0;
-    }
-
-    public void statusVida(){
-        if (vidaAtual <= 0){
-            vidaAtual = 0;
-            setMensagem(this.nome + " está fora de combate!");
-        }
-        else{
-            setMensagem(nome + " tem " + vidaAtual + " de vida!");
-        }
-    }
+    public boolean checaVida(){ return vidaAtual > 0; }
 
     public void receberDano(int danoRecebido){
         vidaAtual -= danoRecebido;
+        if (vidaAtual < 0) vidaAtual = 0;
         setMensagem(this.nome + " recebeu " + danoRecebido + " de dano!");
-        statusVida();
     }
 
     public void ganharXP(int quantidade){
         this.xp += quantidade;
-        setMensagem(this.nome + " ganhou " + quantidade + " de XP!");
-
         if(xp >= 100){
-            this.xp = this.xp - 100;
+            this.xp -= 100;
             subirNivel();
         }
     }
 
-    protected void atualizaAtributos(int aumentaDano, int aumentaVida){
+    // Tornado público para uso externo se necessário, mas idealmente protegido
+    public void atualizaAtributos(int aumentaDano, int aumentaVida){
         this.dano += aumentaDano;
         this.vidaTotal += aumentaVida;
-        vidaAtual = vidaTotal;
+        this.vidaAtual = this.vidaTotal;
     }
 
-    public void aplicarSono() {
-        this.dormindo = true;
-        setMensagem("Shiuu! " + this.nome + " está dormindo, ele ficará uma rodada sem jogar.");
-    }
-
-    public void queimarInimigo() {
-        this.queimando = true;
-        setMensagem(this.nome + " começou a pegar fogo!!");
-    }
+    // Métodos de status - A lógica de DANO por status (ex: queimadura tira vida) deve ser chamada no turno
+    public void aplicarSono() { this.dormindo = true; setMensagem("Dormindo..."); }
+    public void queimarInimigo() { this.queimando = true; setMensagem("Queimando..."); }
+    public void envenenar() { this.envenenado = true; setMensagem("Envenenado..."); }
 
     public boolean processaStatus() {
-        boolean podeAtacar = true;
-
-        if (this.queimando) {
-            int danoFogo = 5;
-            this.receberDano(danoFogo);
-            setMensagem(this.nome + " recebe " + danoFogo + " de dano por queimadura!");
-        }
-
-        if (this.dormindo) {
-            setMensagem(this.nome + " está dormindo e perde a vez");
-            this.dormindo = false;
-            podeAtacar = false;
-        }
-
-        return podeAtacar;
+        // TODO: Implementar lógica de dano periódico (DoT) e impedimento de ação (Sono)
+        // Atualmente retorna sempre true (pode atacar)
+        return true;
     }
 
     public void subirNivel(){
         nivel++;
         vidaAtual = vidaTotal;
-        setMensagem(this.nome + " subiu para o nível " + this.nivel);
+        setMensagem("Level Up! " + this.nivel);
         evoluirStats();
     }
+
+    public void setDormindo(boolean dormindo) { this.dormindo = dormindo; }
+    public void setQueimando(boolean queimando) { this.queimando = queimando; }
+    public void setEnvenenado(boolean envenenado) { this.envenenado = envenenado; }
 }
