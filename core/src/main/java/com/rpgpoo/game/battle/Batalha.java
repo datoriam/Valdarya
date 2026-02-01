@@ -158,22 +158,27 @@ public class Batalha {
         this.mensagemAtual = log.toString();
     }
 
-    public boolean terminou() {
-        // TODO: Ajustar para verificar lista inteira de inimigos (timeB) futuramente
-        if (!inimigo.checaVida()) {
-            mensagemAtual = "VITÓRIA! " + inimigo.getNome() + " caiu.";
-            // TODO: Reativar ganho de XP quando a classe Combatente estiver estável
-            // heroi.ganharXP(50);
-            return true;
-        } else if (!heroi.checaVida()) {
-            mensagemAtual = "DERROTA... Fim de jogo.";
-            return true;
-        }
-        return false;
+   public boolean terminou() {
+
+    // Vitória continua igual (por enquanto 1 inimigo)
+    if (!inimigo.checaVida()) {
+        mensagemAtual = "VITÓRIA! " + inimigo.getNome() + " caiu.";
+        return true;
     }
 
-    public String getStatusCombatentes() {
-        return heroi.getNome() + ": " + heroi.getVidaAtual() + "/" + heroi.getVidaTotal() + " PV\n" +
-            inimigo.getNome() + ": " + inimigo.getVidaAtual() + "/" + inimigo.getVidaTotal() + " PV";
+    // Se o herói atual morreu
+    if (!heroi.checaVida()) {
+
+        // Se TODO o time morreu → Game Over
+        if (timeATodoMorto()) {
+            mensagemAtual = "DERROTA... Todos os heróis foram derrotados.";
+            return true;
+        }
+
+        // Ainda há heróis vivos → troca obrigatória
+        mensagemAtual = heroi.getNome() + " caiu! Escolha outro herói para continuar.";
+        return false; // IMPORTANTE: não termina o jogo
     }
+
+    return false;
 }
