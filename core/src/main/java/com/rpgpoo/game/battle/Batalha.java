@@ -179,6 +179,6 @@ public class Batalha {
         mensagemAtual = heroi.getNome() + " caiu! Escolha outro herói para continuar.";
         return false; // IMPORTANTE: não termina o jogo
     }
-
+heroi.ganharXP(50);
     return false;
 }
