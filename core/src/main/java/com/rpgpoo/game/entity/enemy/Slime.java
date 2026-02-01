@@ -4,7 +4,12 @@ import com.rpgpoo.game.entity.Combatente;
 
 public class Slime extends Combatente {
 
-    public Slime() {
+    public Slime(String alcunha) {
         super("Slime", 50, 2);
+    }
+
+    @Override
+    protected void evoluirStats() {
+
     }
 }

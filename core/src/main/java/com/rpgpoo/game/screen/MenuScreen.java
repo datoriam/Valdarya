@@ -1,6 +1,9 @@
 package com.rpgpoo.game.screen;
 
+import com.rpgpoo.game.main.Valdarya;
+
 public class MenuScreen {
+<<<<<<< HEAD
 
 import com.badlogic.gdx.Gdx;
 import com.badlogic.gdx.ScreenAdapter;
@@ -92,3 +95,8 @@ public class MenuScreen extends ScreenAdapter {
         if (imgTitleScreen != null) imgTitleScreen.dispose();
     }
 }
+=======
+    public MenuScreen(Valdarya valdarya) {
+    }
+}
+>>>>>>> 8dbd87a6bce6f6fa21627dea3589d360beb8201d

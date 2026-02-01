@@ -8,43 +8,68 @@ import java.util.List;
 import java.util.Random;
 
 public class Batalha {
+    /** -Nicolas
+ * Método auxiliar para controle de Game Over.
+ * Verifica se todos os heróis do time A estão mortos.
+ * 
+ * Regra:
+ * - Se existir pelo menos um herói vivo, o jogo continua
+ * - Game **/
+    private boolean timeATodoMorto() {
+    for (Combatente c : timeA) {
+        if (c.checaVida()) { // ainda está vivo
+            return false;
+        }
+    }
+    return true;
+}
     public String mensagemAtual;
     private int andarAtual;
-    private boolean turnoChoose;
+    private boolean turnoChoose; // true = Vez do Heroi, false = Vez do Inimigo
     private Combatente heroi;
     private Combatente inimigo;
-    private StringBuilder logTurno; // Para acumular mensagens durante o turno
+
+    // Mantive o log global apenas para persistência, mas usaremos o local no turno conforme sua alteração
+    private StringBuilder logTurno;
+
     private List<Combatente> timeA;
     private List<Combatente> timeB;
 
-    private Random random; //gera aleatoriedade
+    private Random random;
 
-    public Batalha () {
+    public Batalha() {
         this.timeA = new ArrayList<>();
         this.timeB = new ArrayList<>();
         this.random = new Random();
+        this.logTurno = new StringBuilder();
     }
 
     public Batalha(int andarAtual, Combatente heroi, Combatente inimigo) {
         this.heroi = heroi;
         this.inimigo = inimigo;
         this.andarAtual = andarAtual;
-        mensagemAtual = "";
+        this.mensagemAtual = "";
         this.logTurno = new StringBuilder();
+    }
+
+    // TODO: Implementar lógica de troca (Deixei vazio pra você integrar com a UI, Nicolas)
+    public void trocarHeroi(Combatente novoHeroi) {
+        // Implementação pendente...
     }
 
     public void gerarTimeInimigo(int andarAtual) {
         // Limpa inimigos anteriores
         this.timeB.clear();
 
-        // Lógica do Escalonamento para as fases
-        int quantidadeInimigos = 1 + (andarAtual / 5); 
+        // Lógica de Escalonamento (Sua implementação)
+        // TODO: Testar se não fica muito difícil no andar 10+
+        int quantidadeInimigos = 1 + (andarAtual / 5);
 
         for (int i = 0; i < quantidadeInimigos; i++) {
-            Slime inimigo = new Slime(); 
+            Slime inimigo = new Slime("Slime Viscoso");
             this.timeB.add(inimigo);
         }
-        
+
         this.mensagemAtual = "Andar " + andarAtual + ": " + quantidadeInimigos + " inimigos apareceram!";
     }
 
@@ -54,98 +79,106 @@ public class Batalha {
         turnoChoose = new Random().nextBoolean();
     }
 
-        public void adicionarCombatente(Combatente c, String time) {
-        if (time.equalsIgnoreCase("A")){ //Corrigi o erro do timeA e time B na hora de gerar o case
-            timeA.add (c);
+    public void adicionarCombatente(Combatente c, String time) {
+        if (time.equalsIgnoreCase("A")){
+            timeA.add(c);
         } else if (time.equalsIgnoreCase("B")) {
-            timeB.add (c);
-        } else {
-            System.out.println(" Time inválido! Use A ou B! ");
+            timeB.add(c);
         }
     }
 
+    // Método auxiliar para alternar turnos
+    private void proximoTurno() {
+        this.turnoChoose = !this.turnoChoose;
+    }
+
     public void executarTurno() {
-        logTurno.setLength(0); // Limpa o log do turno anterior
-        StringBuilder log = new StringBuilder(); // Acumulador de texto
-        log.append("Início da Rodada \n"); 
+        logTurno.setLength(0); // Limpa o log global
+
+        // TODO: Validar se esse StringBuilder local está capturando todos os eventos de status
+        StringBuilder log = new StringBuilder();
+        log.append("Início da Rodada \n");
 
         if(terminou()){
             return;
         }
 
         if (turnoChoose) {
-            // TURNO DO HERÓI
-            logTurno.append("TURNO DO HERÓI: ").append(heroi.getNome()).append("\n");
+            // --- TURNO DO HERÓI ---
+            log.append("TURNO DO HERÓI: ").append(heroi.getNome()).append("\n");
 
             if(heroi.processaStatus()) {
-                // Limpa mensagens antigas do herói
-                heroi.setMensagem("");
+                heroi.setMensagem(""); // Limpa buffer do combatente
 
-                logTurno.append(heroi.getNome()).append(" ataca ").append(inimigo.getNome()).append("!\n").append(" Heroi causou ").append(heroi.getDano());
                 heroi.atacar(inimigo);
 
-                // Adiciona mensagens DURANTE o ataque
+                log.append(heroi.getNome()).append(" ataca ").append(inimigo.getNome()).append("!\n");
+
+                // Concatena mensagens de efeito (crítico, erro, etc)
                 if (!heroi.getMensagem().isEmpty()) {
-                    logTurno.append(heroi.getMensagem()).append("\n");
+                    log.append(heroi.getMensagem()).append("\n");
                 }
             }
 
-            // Verifica se inimigo foi derrotado DURANTE o ataque
             if (!inimigo.checaVida()) {
-                logTurno.append("💀 ").append(inimigo.getNome()).append(" foi derrotado!\n");
+                // Removido o emoji aqui
+                log.append(inimigo.getNome()).append(" foi derrotado!\n");
             }
         }
         else {
-            // TURNO DO INIMIGO
-            logTurno.append("TURNO DO INIMIGO: ").append(inimigo.getNome()).append("\n");
+            // --- TURNO DO INIMIGO ---
+            log.append("TURNO DO INIMIGO: ").append(inimigo.getNome()).append("\n");
 
-            if(heroi.processaStatus()) {
-                // Limpa mensagens antigas do inimigo
+            if(inimigo.processaStatus()) {
                 inimigo.setMensagem("");
 
-                logTurno.append(inimigo.getNome()).append(" ataca ").append(heroi.getNome()).append("!\n").append(" Inimigo causou ").append(inimigo.getDano());
                 inimigo.atacar(heroi);
 
-                // Adiciona mensagens DURANTE o ataque (incluindo bloqueio do Guardião)
-                if (!inimigo.getMensagem().isEmpty()) {
-                    logTurno.append(inimigo.getMensagem()).append("\n");
-                }
+                log.append(inimigo.getNome()).append(" ataca ").append(heroi.getNome()).append("!\n");
 
-                // Se o herói é Guardião, também mostra suas mensagens de bloqueio
+                if (!inimigo.getMensagem().isEmpty()) {
+                    log.append(inimigo.getMensagem()).append("\n");
+                }
+                // Se o herói defendeu (Guardião), pega a msg dele
                 if (!heroi.getMensagem().isEmpty()) {
-                    logTurno.append(heroi.getMensagem()).append("\n");
+                    log.append(heroi.getMensagem()).append("\n");
                 }
             }
 
-            // Verifica se herói foi derrotado DURANTE o ataque
             if (!heroi.checaVida()) {
-                logTurno.append("💀 ").append(heroi.getNome()).append(" foi derrotado!\n");
+                // Removido o emoji aqui também
+                log.append(heroi.getNome()).append(" foi derrotado!\n");
             }
         }
-        // Atualiza mensagem atual com TODO o log do turno
+
+        // TODO: Verifiquei que você adicionou essa chamada. Certifique-se que não pula turno duplo.
+        proximoTurno();
+
+        // Atualiza a mensagem da tela com o log local (Sua alteração mantida)
         this.mensagemAtual = log.toString();
     }
-    
-    public boolean terminou() {
-        if (!inimigo.checaVida()) {
-            // Mensagem de vitória
-            mensagemAtual = heroi.getNome() + " VENCEU! Andar " + andarAtual + " completo!";
-            // Chamando o método de xp
-            // Nicolas: Chamada do método de XP que o Davi implementou no Combatente.java
-            // Isso vai disparar automaticamente o subirNivel() e o seu evoluirStats() no Atirador.
-            heroi.ganharXP(50); 
-            
-            return true;
-        } else if (!heroi.checaVida()) {
-            mensagemAtual = heroi.getNome() + " PERDEU! Fim da jornada...";
-            return true;
-        }
-        return false;
+
+   public boolean terminou() {
+
+    // Vitória continua igual (por enquanto 1 inimigo)
+    if (!inimigo.checaVida()) {
+        mensagemAtual = "VITÓRIA! " + inimigo.getNome() + " caiu.";
+        return true;
     }
 
-    // Método para obter status atual dos combatentes
-    public String getStatusCombatentes() {
-        return heroi.getNome() + ": " + heroi.getVidaAtual() + "/" + heroi.getVidaTotal() + " PV" +
-               "\n" + inimigo.getNome() + ": " + inimigo.getVidaAtual() + "/" + inimigo.getVidaTotal() + " PV";
+    // Se o herói atual morreu
+    if (!heroi.checaVida()) {
+
+        // Se TODO o time morreu → Game Over
+        if (timeATodoMorto()) {
+            mensagemAtual = "DERROTA... Todos os heróis foram derrotados.";
+            return true;
+        }
+
+        // Ainda há heróis vivos → troca obrigatória
+        mensagemAtual = heroi.getNome() + " caiu! Escolha outro herói para continuar.";
+        return false; // IMPORTANTE: não termina o jogo
     }
+heroi.ganharXP(50);
+    return false;
 }
