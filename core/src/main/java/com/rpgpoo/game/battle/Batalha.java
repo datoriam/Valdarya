@@ -1,6 +1,7 @@
 package com.rpgpoo.game.battle;
 
 import com.rpgpoo.game.entity.Combatente;
+import com.rpgpoo.game.entity.enemy.Slime;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,6 +33,21 @@ public class Batalha {
         this.logTurno = new StringBuilder();
     }
 
+    public void gerarTimeInimigo(int andarAtual) {
+        // Limpa inimigos anteriores
+        this.timeB.clear();
+
+        // Lógica do Escalonamento para as fases
+        int quantidadeInimigos = 1 + (andarAtual / 5); 
+
+        for (int i = 0; i < quantidadeInimigos; i++) {
+            Slime inimigo = new Slime(); 
+            this.timeB.add(inimigo);
+        }
+        
+        this.mensagemAtual = "Andar " + andarAtual + ": " + quantidadeInimigos + " inimigos apareceram!";
+    }
+
     public String getMensagemAtual(){ return this.mensagemAtual; }
 
     public void iniciar() {
@@ -50,6 +66,8 @@ public class Batalha {
 
     public void executarTurno() {
         logTurno.setLength(0); // Limpa o log do turno anterior
+        StringBuilder log = new StringBuilder(); // Acumulador de texto
+        log.append("Início da Rodada \n"); 
 
         if(terminou()){
             return;
@@ -104,12 +122,10 @@ public class Batalha {
                 logTurno.append("💀 ").append(heroi.getNome()).append(" foi derrotado!\n");
             }
         }
-
         // Atualiza mensagem atual com TODO o log do turno
-        mensagemAtual = logTurno.toString();
-        proximoTurno();
+        this.mensagemAtual = log.toString();
     }
-
+    
     public boolean terminou() {
         if (!inimigo.checaVida()) {
             // Mensagem de vitória
