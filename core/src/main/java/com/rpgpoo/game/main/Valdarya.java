@@ -1,13 +1,14 @@
 package com.rpgpoo.game.main;
 
 import com.badlogic.gdx.Game;
+import com.badlogic.gdx.Gdx;
+import com.badlogic.gdx.graphics.GL20;
 import com.badlogic.gdx.graphics.g2d.BitmapFont;
 import com.badlogic.gdx.graphics.g2d.SpriteBatch;
 import com.rpgpoo.game.screen.MenuScreen;
 
 public class Valdarya extends Game {
 
-    // Recursos compartilhados para economizar memória
     public SpriteBatch batch;
     public BitmapFont font;
 
@@ -15,15 +16,16 @@ public class Valdarya extends Game {
     public void create() {
         batch = new SpriteBatch();
         font = new BitmapFont();
+        font.getData().setScale(2.0f);
 
-        // Inicia o jogo pelo Menu (fluxo normal)
-        // RESPONSAVEL: DESENVOLVA A CLASSE MenuScreen.java
         this.setScreen(new MenuScreen(this));
     }
 
     @Override
     public void render() {
-        super.render(); // Apenas desenha a tela atual, sem lógica extra
+        Gdx.gl.glClearColor(0, 0, 0, 1);
+        Gdx.gl.glClear(GL20.GL_COLOR_BUFFER_BIT);
+        super.render();
     }
 
     @Override
