@@ -4,75 +4,66 @@ public class Arcanista extends Combatente {
 
     private int manaAtual;
     private int manaMaxima;
-    private static final int custoFeitico = 20; //custo inicial, pode haver mudança no valor do custo
-    private static final int recuperaMeditacao = 10;
-
-    private static final int multiplicadorMagia = 2;
+    private static final int CUSTO_FEITICO = 25; // Aumentei custo pra nao spammar
+    private static final int RECUPERA_MEDITACAO = 15;
+    private static final int MULTIPLICADOR_MAGIA = 2;
 
     public Arcanista (String nome) {
-
-        super(nome, 80,  8);
-
+        // Vida baixa (60), Dano base alto (18)
+        super(nome, 60, 18);
         this.manaAtual = 100;
         this.manaMaxima = 100;
     }
 
-    public int getMana(){
-        return this.manaAtual;
-    }
+    public int getMana(){ return this.manaAtual; }
 
-    private void meditar(Combatente alvo) {
-        this.manaAtual += recuperaMeditacao;
-
+    private void meditar() {
+        this.manaAtual += RECUPERA_MEDITACAO;
         if (this.manaAtual > this.manaMaxima){
             this.manaAtual = this.manaMaxima;
         }
-        alvo.receberDano(this.getDano());
-
-        setMensagem(this.getNome() + " está sem mana ele vai atacar fisicamente enquanto está nesse estado");
-
+        setMensagem(this.getNome() + " medita e recupera mana [" + manaAtual + "/" + manaMaxima + "]");
     }
 
     private void lancarFeitico(Combatente alvo){
-        this.manaAtual -= custoFeitico;
-        int danoMagico = this.getDano() * multiplicadorMagia;
-        setMensagem(this.getNome() + " está lançando o feitiço! Dano causado: " + getDano() + "\n A mana atual de " + getNome() + " é " + this.manaAtual);
-        //para aplicar o sleep
-        //corrigi pra ação de efeito mágico funcionar depois de atacar
-        if(this.getNivel() >= 5) {
-            alvo.receberDano(danoMagico);
-            alvo.aplicarSono();
-        } else if (this.getNivel() >= 6) {
-            alvo.receberDano(danoMagico);
-            alvo.queimarInimigo();
-        } else {
+        this.manaAtual -= CUSTO_FEITICO;
+        int danoMagico = this.getDano() * MULTIPLICADOR_MAGIA;
 
-            alvo.receberDano(danoMagico);
+        setMensagem(this.getNome() + " lança feitiço! (Mana: " + this.manaAtual + ")");
+
+        // Aplica dano
+        alvo.receberDano(danoMagico);
+
+        // Efeitos extras por nivel
+        if(this.getNivel() >= 8) {
+            alvo.queimarInimigo();
+        } else if (this.getNivel() >= 4) {
+            // Chance de sono pra nao ficar op
+            if (Math.random() > 0.5) alvo.aplicarSono();
         }
     }
 
     @Override
     public void atacar(Combatente alvo) {
+        limparMensagem();
 
-        if(this.manaMaxima >= custoFeitico) {
+        // CORRECAO: checa manaAtual, nao manaMaxima
+        if(this.manaAtual >= CUSTO_FEITICO) {
             lancarFeitico(alvo);
-
         } else {
-            meditar(alvo);
+            meditar(); // Se nao tem mana, medita (perde o turno de ataque mas recupera)
         }
     }
 
     @Override
-    protected void evoluirStats() {  //método de evolução do Arcanista, depois analisar para um melhor balanceamento
+    protected void evoluirStats() {
+        // NERF: Mago ganha muito dano (+4) mas quase nada de vida (+3)
+        // Virou "Glass Cannon" real
+        super.atualizaAtributos(4, 3);
 
-        super.atualizaAtributos(5, 10);
-
-        this.manaMaxima += 20;
+        this.manaMaxima += 10;
         this.manaAtual = this.manaMaxima;
 
-        setMensagem(this.getNome() + " aumentou de nível! Mana Máxima = " + this.manaMaxima);
+        setMensagem("Mana Máxima aumentou para " + this.manaMaxima);
     }
-
-
-
 }
