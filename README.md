@@ -1,3 +1,4 @@
+
 # ⚔️ Projeto Valdarya: RPG Tático em Java
 
 ![Logo LibGDX](https://libgdx.com/assets/brand/logo_dark.svg)
@@ -92,6 +93,9 @@ O projeto foi compilado em um arquivo executável (`.jar`) para facilitar a exec
 ### Pré-requisitos
 
 * Ter o **Java (JRE ou JDK)** instalado na máquina.
+* ☕ **[Clique aqui para baixar o Java no site da Oracle](https://www.oracle.com/java/technologies/downloads/)**
+
+
 
 ### Passo a Passo
 
