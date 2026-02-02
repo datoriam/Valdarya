@@ -3,37 +3,31 @@ package com.rpgpoo.game.entity;
 public class Atirador extends Combatente {
 
     public Atirador(String nome) {
-        // Inicialização com valores balanceados: 85 de Vida e 18 de Dano
-        super(nome, 85, 18);
+        // Balanceado: 80 vida, 14 dano
+        super(nome, 80, 14);
     }
 
     @Override
     public void atacar(Combatente alvo) {
-        System.out.println(this.getNome() + " dispara um projétil envolto em sombras!");
+        limparMensagem();
+        setMensagem(this.getNome() + " dispara das sombras!");
 
-        // Uso de getters para ler status e método receberDano do alvo
         alvo.receberDano(this.getDano());
 
-        // Efeito Especial: Atordoar o alvo utilizando setDormindo
-        alvo.setDormindo(true);
-        System.out.println("O alvo foi paralisado pela energia das trevas!");
+        // Balanceamento: Chance de aplicar sono (não 100% das vezes)
+        // Se nivel for alto, tem chance de critico/efeito
+        if (getNivel() >= 5 && Math.random() > 0.7) {
+            alvo.aplicarSono();
+            setMensagem("CRITICO! O alvo apagou!");
+        }
     }
 
     @Override
     protected void evoluirStats() {
-        // Lógica de Atirador das Trevas: Aumento de 20% no dano atual
-        int bonusDanoTrevas = (int) (this.getDano() * 0.20);
-        int ganhoVidaBase = 12;
+        // NERF: Crescimento linear e controlado
+        // Antes era % (exponencial), agora é fixo: +3 dano, +6 vida
+        super.atualizaAtributos(3, 6);
 
-        //  Uso obrigatório do super.atualizaAtributos
-        super.atualizaAtributos(bonusDanoTrevas, ganhoVidaBase);
-
-        System.out.println("O " + this.getNome() + " ascendeu para Atirador das Trevas!");
-        System.out.println("Seu dano aumentou drasticamente com o poder sombrio!");
-
-        // Feedback visual para níveis específicos
-        if (this.getNivel() >= 5) {
-            System.out.println("Domínio total das trevas alcançado!");
-        }
+        setMensagem(this.getNome() + " aprimorou a mira sombria!");
     }
 }
