@@ -1,3 +1,4 @@
+
 # ⚔️ Projeto Valdarya: RPG Tático em Java
 
 ![Logo LibGDX](https://libgdx.com/assets/brand/logo_dark.svg)
@@ -57,16 +58,20 @@ classDiagram
     Inimigo <|-- Slime
     Inimigo <|-- Zumbi
 
+```
+
 ### 2. Polimorfismo de Sobrescrita (Late Binding)
+
 O método `atacar(Combatente alvo)` é o coração do polimorfismo no projeto. Embora declarado na superclasse, cada subclasse redefine seu comportamento de forma única:
 
-| Subclasse     | Especialização do Método `atacar()`                                             |
-|:--------------|:--------------------------------------------------------------------------------|
-| **Guardião**  | Causa dano físico e recupera **Vigor** para alimentar sua mecânica de bloqueio. |
-| **Arcanista** | Consome **Mana** para disparar feitiços com alto multiplicador de dano.         |
-| **Atirador**  | Dispara projéteis sombrios com chance de aplicar status de **Sono** no alvo.    |
+| Subclasse | Especialização do Método `atacar()` |
+| --- | --- |
+| **Guardião** | Causa dano físico e recupera **Vigor** para alimentar sua mecânica de bloqueio. |
+| **Arcanista** | Consome **Mana** para disparar feitiços com alto multiplicador de dano. |
+| **Atirador** | Dispara projéteis sombrios com chance de aplicar status de **Sono** no alvo. |
 
 ### 3. Encapsulamento
+
 Todos os atributos sensíveis são declarados como `private`. A integridade dos dados é garantida por métodos de acesso e modificação (Getters/Setters) e métodos de lógica de negócio, como o `receberDano(int dano)`, que valida a defesa antes de alterar o estado do HP.
 
 ---
@@ -78,6 +83,33 @@ A manipulação de hordas e times foi implementada utilizando o framework de **J
 * **Listas Dinâmicas:** Utilizamos `ArrayList<Combatente>` para gerenciar o `timeA` (Aliados) e `timeB` (Inimigos). Isso permitiu que o jogo escalasse de 1 até 3 inimigos simultâneos conforme o andar.
 * **Ataque em Área:** Implementamos lógica de iteração (loops) sobre as coleções para que habilidades específicas atinjam múltiplos objetos da lista simultaneamente.
 * **Fluxo de Auto-Target:** Ao detectar a derrota do personagem ativo, o sistema varre a `Collection` em busca do próximo objeto vivo, garantindo que o loop de batalha não seja interrompido por exceções de referência nula.
+
+---
+
+## 🚀 Instalação e Como Jogar
+
+O projeto foi compilado em um arquivo executável (`.jar`) para facilitar a execução sem a necessidade de configurar a IDE completa.
+
+### Pré-requisitos
+
+* Ter o **Java (JRE ou JDK)** instalado na máquina.
+* ☕ **[Clique aqui para baixar o Java no site da Oracle](https://www.oracle.com/java/technologies/downloads/)**
+
+
+
+### Passo a Passo
+
+1. Acesse a **[Release Oficial v1.0 no GitHub](https://github.com/datoriam/Valdarya/releases/tag/v1.0)**.
+2. Na seção **Assets**, clique no arquivo `.jar` para fazer o download.
+3. Após baixar, dê **dois cliques** no arquivo para abrir o jogo.
+
+> **Nota:** Caso o jogo não abra com dois cliques, você pode executá-lo via terminal na pasta do arquivo usando o comando:
+> ```bash
+> java -jar Valdarya.jar
+> 
+> ```
+> 
+> 
 
 ---
 
@@ -93,11 +125,13 @@ Para uma organização profissional, o projeto foi dividido em módulos de respo
 ---
 
 ## 🎮 Conclusão
+
 O **Valdarya** demonstra como a união de uma engine de alto desempenho com uma arquitetura sólida em POO permite criar sistemas complexos, escaláveis e de fácil manutenção, cumprindo todos os requisitos acadêmicos propostos.
 
 ---
 
 ## 📹 Vídeo de Defesa
+
 A apresentação do projeto e a defesa técnica podem ser visualizadas através do link abaixo:
 
 📂 **[Acesse aqui o vídeo da defesa no Google Drive](https://drive.google.com/drive/folders/1CzO9SkC7qcMwMzi0bxWZTnsmw07yNWju?usp=sharing)**
