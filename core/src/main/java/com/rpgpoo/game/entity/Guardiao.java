@@ -5,12 +5,13 @@ public class Guardiao extends Combatente {
     private final int CUSTO_BLOQUEIO = 15;
 
     public Guardiao(String nome) {
-        super(nome, 120, 10);
+        // Base: 100 vida (antes era 120), 10 dano
+        super(nome, 100, 10);
     }
 
     @Override
     public void atacar(Combatente alvo) {
-        limparMensagem(); // Limpa antes do ataque
+        limparMensagem();
         setMensagem(getNome() + " ataca com martelo pesado!");
         alvo.receberDano(getDano());
 
@@ -20,27 +21,29 @@ public class Guardiao extends Combatente {
 
     @Override
     public void receberDano(int danoRecebido) {
-        limparMensagem(); // Limpa antes de receber dano
+        limparMensagem();
 
         if (vigor >= CUSTO_BLOQUEIO) {
-            // BLOQUEIO - mensagem IMEDIATA
-            setMensagem(getNome() + " BLOQUEIA o ataque com escudo!");
-            setMensagem("Dano " + danoRecebido + " → 0");
+            // BLOQUEIO
+            setMensagem(getNome() + " BLOQUEIA com escudo!");
+            setMensagem("Dano anulado (" + danoRecebido + " -> 0)");
 
             vigor -= CUSTO_BLOQUEIO;
-            setMensagem("Consumiu " + CUSTO_BLOQUEIO + " de vigor [" + vigor + "/50]");
         } else {
-            // SEM BLOQUEIO - dano normal
-            setMensagem(getNome() + " não tem vigor para bloquear!");
+            // SEM VIGOR
+            setMensagem(getNome() + " sem vigor para bloquear!");
             super.receberDano(danoRecebido);
         }
     }
 
     @Override
     protected void evoluirStats() {
-        super.atualizaAtributos(3, 30);
+        // NERF: Antes ganhava 30 de vida, agora ganha 12
+        // Dano subia 3, agora sobe 2
+        super.atualizaAtributos(2, 12);
+
         vigor = 50;
-        setMensagem("Vigor restaurado para 50!");
+        setMensagem("Vigor restaurado!");
     }
 
     @Override
@@ -53,10 +56,9 @@ public class Guardiao extends Combatente {
             vigor = Math.min(vigor + recuperacao, 50);
 
             if (vigorAntes < 50 && vigor > vigorAntes) {
-                setMensagem("🔄 " + getNome() + " recupera " + (vigor - vigorAntes) + " de vigor passivamente");
+                setMensagem("Passiva: Recuperou " + (vigor - vigorAntes) + " vigor");
             }
         }
-
         return podeAtacar;
     }
 
