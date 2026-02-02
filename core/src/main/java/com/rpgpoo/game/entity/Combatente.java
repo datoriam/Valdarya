@@ -1,6 +1,9 @@
 package com.rpgpoo.game.entity;
 
 public abstract class Combatente {
+    // Mantive a trava do nível 25
+    protected static final int NIVEL_MAXIMO = 25;
+
     private String mensagem;
     private String nome;
     private int vidaTotal;
@@ -9,7 +12,7 @@ public abstract class Combatente {
     private int dano;
     private int xp;
 
-    // Status de condição
+    // Status
     private boolean dormindo = false;
     private boolean queimando = false;
     private boolean envenenado = false;
@@ -26,12 +29,31 @@ public abstract class Combatente {
 
     public void atacar(Combatente alvo) {
         setMensagem("");
-        String textoAtaque = this.nome + " desferiu um golpe!";
+        String textoAtaque = this.nome + " atacou!";
         setMensagem(textoAtaque);
         alvo.receberDano(this.dano);
     }
 
+    public void receberDano(int danoRecebido) {
+        // Simples: Vida - Dano
+        this.vidaAtual -= danoRecebido;
+        if (this.vidaAtual < 0) this.vidaAtual = 0;
+        setMensagem(this.nome + " tomou " + danoRecebido + " de dano!");
+    }
+
+    // Mantive o método utilitário pois a Batalha usa
+    public void recuperarVidaTotal() {
+        this.vidaAtual = this.vidaTotal;
+    }
+
     protected abstract void evoluirStats();
+
+    // Curva de XP padrão (Linear ou levemente progressiva)
+    public int getXpNecessario() {
+        // ANTES: 100 + (nivel * 50)
+        // AGORA: 80 + (nivel * 25) -> Upa quase 2x mais rápido
+        return 80 + (this.nivel * 25);
+    }
 
     public boolean processaStatus() {
         if (!checaVida()) return false;
@@ -61,33 +83,33 @@ public abstract class Combatente {
         return true;
     }
 
-    public void receberDano(int danoRecebido) {
-        this.vidaAtual -= danoRecebido;
-        if (this.vidaAtual < 0) this.vidaAtual = 0;
-        setMensagem(this.nome + " tomou " + danoRecebido + " de dano!");
-    }
-
     public void ganharXP(int quantidade) {
+        if (this.nivel >= NIVEL_MAXIMO) {
+            setMensagem("Nivel Maximo!");
+            return;
+        }
+
         this.xp += quantidade;
         setMensagem("Ganhou " + quantidade + " XP.");
 
-        while (this.xp >= 100) {
-            this.xp -= 100;
-            subirNivel(); // heroi sempre mostra mensagem
+        while (this.xp >= getXpNecessario()) {
+            this.xp -= getXpNecessario();
+            subirNivel();
+            if (this.nivel >= NIVEL_MAXIMO) {
+                this.xp = 0;
+                setMensagem("NIVEL MAXIMO ALCANCADO!");
+                break;
+            }
         }
     }
 
-    // --- MUDANÇA AQUI: SOBRECARGA PRA ESCONDER O TEXTO ---
-
-    // metodo padrao (pros herois)
     public void subirNivel() {
         subirNivel(true);
     }
 
-    // metodo com opcao de silencio (pros monstros)
     public void subirNivel(boolean mostrarMensagem) {
         this.nivel++;
-        this.vidaAtual = this.vidaTotal;
+        this.vidaAtual = this.vidaTotal; // Cura ao upar
 
         if (mostrarMensagem) {
             setMensagem("GLORIOSO! " + this.nome + " alcancou nivel " + this.nivel + "!");
@@ -98,35 +120,20 @@ public abstract class Combatente {
     public void atualizaAtributos(int aumentaDano, int aumentaVida) {
         this.dano += aumentaDano;
         this.vidaTotal += aumentaVida;
-        this.vidaAtual = this.vidaTotal;
     }
 
-    public void aplicarSono() {
-        this.dormindo = true;
-        setMensagem(this.nome + " dormiu!");
-    }
-
-    public void queimarInimigo() {
-        this.queimando = true;
-        setMensagem(this.nome + " pegou fogo!");
-    }
-
-    public void envenenar() {
-        this.envenenado = true;
-        setMensagem(this.nome + " envenenado!");
-    }
+    // Getters e Setters e Status
+    public void aplicarSono() { this.dormindo = true; setMensagem(this.nome + " dormiu!"); }
+    public void queimarInimigo() { this.queimando = true; setMensagem(this.nome + " pegou fogo!"); }
+    public void envenenar() { this.envenenado = true; setMensagem(this.nome + " envenenado!"); }
 
     public void setMensagem(String msg) {
-        if (this.mensagem == null || this.mensagem.isEmpty()) {
-            this.mensagem = msg;
-        } else {
-            this.mensagem += "\n" + msg;
-        }
+        if (this.mensagem == null || this.mensagem.isEmpty()) this.mensagem = msg;
+        else this.mensagem += "\n" + msg;
     }
 
     public void limparMensagem() { this.mensagem = ""; }
     public String getMensagem() { return mensagem; }
-
     public String getNome() { return nome; }
     public int getDano() { return dano; }
     public int getNivel() { return nivel; }

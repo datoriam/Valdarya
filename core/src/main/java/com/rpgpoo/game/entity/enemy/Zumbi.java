@@ -4,11 +4,14 @@ import com.rpgpoo.game.entity.Combatente;
 
 public class Zumbi extends Combatente {
     public Zumbi(String nome) {
-        super(nome, 90, 12);
+
+        super(nome, 70, 8);
     }
 
     @Override
     protected void evoluirStats() {
-        atualizaAtributos(2, 15);
+
+        atualizaAtributos(1, 8);
+        recuperarVidaTotal();
     }
 }

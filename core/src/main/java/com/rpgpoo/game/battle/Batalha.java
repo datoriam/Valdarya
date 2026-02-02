@@ -19,6 +19,8 @@ public class Batalha {
     private List<Combatente> timeA;
     private List<Combatente> timeB;
 
+    private static final int ANDAR_MAXIMO = 25;
+
     public Batalha(int andarAtual, Combatente heroi, Combatente inimigo) {
         this.timeA = new ArrayList<>();
         this.timeB = new ArrayList<>();
@@ -33,10 +35,8 @@ public class Batalha {
 
     public List<Combatente> getTimeA() { return timeA; }
     public List<Combatente> getTimeB() { return timeB; }
-
     public boolean isTurnoHeroi() { return this.turnoChoose; }
 
-    // -Nicolas: Verifica se geral do time A ja era
     private boolean timeATodoMorto() {
         if (timeA.isEmpty()) return true;
         for (Combatente c : timeA) {
@@ -45,7 +45,6 @@ public class Batalha {
         return true;
     }
 
-    // -Nicolas: Varre o time pra botar o proximo vivo no combate
     private void trocarFocoHeroi() {
         for (Combatente c : timeA) {
             if (c.checaVida()) {
@@ -96,6 +95,11 @@ public class Batalha {
     public Combatente getInimigoAtual() { return this.inimigo; }
 
     public void gerarTimeInimigo(int andar) {
+        if (andar > ANDAR_MAXIMO) {
+            this.mensagemAtual = "A torre está vazia. Você venceu.";
+            return;
+        }
+
         this.timeB.clear();
         int quantidade = 1;
         if (andar >= 3) quantidade = 2;
@@ -104,21 +108,38 @@ public class Batalha {
         for (int i = 0; i < quantidade; i++) {
             Combatente mob;
             boolean ehBoss = false;
+
+            // Lógica de Boss a partir do andar 5
             if (andar >= 3 && i % 2 == 0) {
                 String nome = "Zumbi " + (i+1);
-                if (andar > 5) { nome = "Zumbi Raivoso " + (i+1); ehBoss = true; }
+                if (andar > 5) {
+                    nome = "Zumbi Raivoso " + (i+1);
+                    ehBoss = true;
+                }
                 mob = new Zumbi(nome);
             } else {
                 String nome = "Slime " + (i+1);
-                if (andar > 5) { nome = "Rei Slime " + (i+1); ehBoss = true; }
+                if (andar > 5) {
+                    nome = "Rei Slime " + (i+1);
+                    ehBoss = true;
+                }
                 mob = new Slime(nome);
             }
 
+            // O monstro sobe de nível conforme o andar
             for(int j = 1; j < andar; j++) mob.subirNivel(false);
 
-            if (ehBoss) mob.atualizaAtributos(5, 50);
+            // --- AQUI ESTÁ O NERF DO BOSS ---
+            if (ehBoss) {
+                // ANTES: +5 Dano, +50 Vida
+                // AGORA: +3 Dano, +30 Vida (Muito mais justo)
+                mob.atualizaAtributos(3, 30);
+                mob.recuperarVidaTotal();
+            }
+
             this.timeB.add(mob);
         }
+
         if (!timeB.isEmpty()) this.inimigo = timeB.get(0);
         this.mensagemAtual = "Andar " + andar + " - Inimigos a vista!";
     }
@@ -145,7 +166,7 @@ public class Batalha {
         if(terminou()) return;
 
         if (turnoChoose) {
-            // -Nicolas: Garante que o alvo ta vivo antes de bater
+            // Turno do Jogador
             if(!inimigo.checaVida()) trocarFocoInimigo();
 
             if(heroi.processaStatus()) {
@@ -161,10 +182,12 @@ public class Batalha {
             }
         }
         else {
-            // -Nicolas: Turno da horda. Se alguem morrer no meio, ja puxa o proximo
+            // Turno da Horda (Sem IA complexa, bate no heroi atual)
             boolean alguemAtacou = false;
             for (Combatente mob : timeB) {
-                // Se o heroi atual caiu pro inimigo anterior, busca o proximo vivo antes do proximo ataque
+                if (timeATodoMorto()) break;
+
+                // Se o heroi atual caiu, troca antes de apanhar
                 if (!heroi.checaVida()) trocarFocoHeroi();
 
                 if (mob.checaVida() && heroi.checaVida()) {
@@ -177,7 +200,10 @@ public class Batalha {
                 }
             }
             if (!alguemAtacou) logTurno.append("Inimigos hesitaram...");
-            if (!heroi.checaVida()) logTurno.append("\n").append(heroi.getNome()).append(" caiu!");
+            if (!heroi.checaVida()) {
+                logTurno.append("\n").append(heroi.getNome()).append(" caiu!");
+                trocarFocoHeroi();
+            }
         }
 
         this.turnoChoose = !this.turnoChoose;
@@ -191,18 +217,19 @@ public class Batalha {
         }
 
         if (!inimigosVivos) {
-            if (andarAtual >= 25) mensagemAtual = "PARABENS! TORRE CONQUISTADA!";
-            else mensagemAtual = "VITORIA! (Tecle Espaco)";
+            if (andarAtual >= ANDAR_MAXIMO) {
+                mensagemAtual = "PARABENS! TORRE CONQUISTADA!";
+            } else {
+                mensagemAtual = "VITORIA! (Tecle Espaco)";
+            }
             return true;
         }
 
-        // -Nicolas: So acaba se geral do time A tiver no chao
         if (!heroi.checaVida()) {
             if (timeATodoMorto()) {
                 mensagemAtual = "DERROTA TOTAL.";
                 return true;
             }
-            // Se ainda tem gente, a troca agora eh automatica no executarTurno ou manual por aqui
             trocarFocoHeroi();
             mensagemAtual = heroi.getNome() + " assumiu o combate!";
             return false;
