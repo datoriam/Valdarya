@@ -119,9 +119,9 @@ public class ArenaScreen extends ScreenAdapter {
 
         // carrega assets
         imgFundo = carregarTexturaSafe("fundobatalha.png", Color.DARK_GRAY);
-        imgGuardiao = carregarTexturaSafe("avatar_Guardiao.png", Color.BLUE);
-        imgArcanista = carregarTexturaSafe("avatar_Arcanista.png", Color.PURPLE);
-        imgAtirador = carregarTexturaSafe("avatar_Atirador.png", Color.GREEN);
+        imgGuardiao = carregarTexturaSafe("avatar_guardiao.png", Color.BLUE);
+        imgArcanista = carregarTexturaSafe("avatar_arcanista.png", Color.PURPLE);
+        imgAtirador = carregarTexturaSafe("avatar_atirador.png", Color.GREEN);
 
         imgInimigoZumbi = carregarTexturaSafe("zumbi.png", Color.GRAY);
 

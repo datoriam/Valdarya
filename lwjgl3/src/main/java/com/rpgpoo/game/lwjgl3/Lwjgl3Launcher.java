@@ -25,7 +25,9 @@ public class Lwjgl3Launcher {
         configuration.setForegroundFPS(60);
         configuration.setWindowedMode(1280, 720); // HD padrão
 
-        // Deixei ícone padrão pra evitar erro de arquivo não encontrado
+
+        configuration.setWindowIcon("logo128.png", "logo64.png", "logo32.png", "logo16.png");
+
         return configuration;
     }
 }
