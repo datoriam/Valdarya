@@ -1,58 +1,46 @@
 package com.rpgpoo.game.entity;
 
-import java.util.Random;
+import com.rpgpoo.game.entity.Combatente;
 
 public class Atirador extends Combatente {
-    private Random dado;
 
     public Atirador(String nome) {
-        // Vida decente e Dano alto
-        super(nome, 100, 20);
-        this.dado = new Random();
+        super(nome, 85, 18);
     }
 
-    @Override
-    protected void evoluirStats() {
-        // Ganha vida e dano consistentes
-        atualizaAtributos(5, 20);
-        recuperarVidaTotal();
+    private int calcularDanoCritico(int danoBase) {
+        // Simulação de dado de 20 lados (D20)
+        int dado = (int) (Math.random() * 20) + 1;
+
+        // Se tirar 18, 19 ou 20, causa 50% de dano extra (Crítico)
+        if (dado >= 18) {
+            return (int) (dadoBase * 1.5);
+        }
+        return danoBase;
     }
 
     @Override
     public void atacar(Combatente alvo) {
-        setMensagem("");
-
-        int danoFinal = getDano();
-        boolean critico = false;
-
-        // 30% de chance de CRÍTICO
-        if (dado.nextInt(100) < 30) {
-            danoFinal *= 2; // Dobra o dano
-            critico = true;
-            setMensagem("HEADSHOT! " + getNome() + " acertou um ponto vital!");
-        } else {
-            setMensagem(getNome() + " disparou uma flecha.");
-        }
-
-        // Aplica o dano
+        int danoFinal = calcularDanoCritico(this.getDano());
         alvo.receberDano(danoFinal);
+        
+        // Aplica o status de sono/paralisia
+        alvo.setDormindo(true);
 
-        // --- ROUBO DE VIDA ---
-        // O Atirador recupera 30% do dano causado como vida.
-        // Se der critico de 100, cura 30 de vida.
-        int rouboDeVida = (int) (danoFinal * 0.30);
-
-        // Garante pelo menos 1 de cura
-        if (rouboDeVida < 1) rouboDeVida = 1;
-
-        // Lógica de cura (não ultrapassa o máximo)
-        if (getVidaAtual() + rouboDeVida >= getVidaTotal()) {
-            recuperarVidaTotal();
+        if (danoFinal > this.getDano()) {
+            this.setMensagem(this.getNome() + " ACERTO CRÍTICO! Dano das sombras: " + danoFinal);
         } else {
-            receberDano(-rouboDeVida); // Dano negativo cura
+            this.setMensagem(this.getNome() + " disparou projétil de sombras em " + alvo.getNome());
         }
+    }
 
-        // Adiciona mensagem de cura
-        setMensagem("(Roubou " + rouboDeVida + " de vida)");
+    @Override
+    protected void evoluirStats() {
+        int bonusDanoTrevas = (int) (this.getDano() * 0.20);
+        int ganhoVidaBase = 12;
+
+        super.atualizaAtributos(bonusDanoTrevas, ganhoVidaBase);
+        
+        System.out.println("Ascensão: " + this.getNome() + " agora é um Atirador das Trevas!");
     }
 }
