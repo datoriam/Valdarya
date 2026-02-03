@@ -14,7 +14,7 @@ public class Atirador extends Combatente {
 
         // Se tirar 18, 19 ou 20, causa 50% de dano extra (Crítico)
         if (dado >= 18) {
-            return (int) (dadoBase * 1.5);
+            return (int) (danoBase * 1.5);
         }
         return danoBase;
     }
@@ -23,7 +23,7 @@ public class Atirador extends Combatente {
     public void atacar(Combatente alvo) {
         int danoFinal = calcularDanoCritico(this.getDano());
         alvo.receberDano(danoFinal);
-        
+
         // Aplica o status de sono/paralisia
         alvo.setDormindo(true);
 
@@ -40,7 +40,7 @@ public class Atirador extends Combatente {
         int ganhoVidaBase = 12;
 
         super.atualizaAtributos(bonusDanoTrevas, ganhoVidaBase);
-        
+
         System.out.println("Ascensão: " + this.getNome() + " agora é um Atirador das Trevas!");
     }
 }
