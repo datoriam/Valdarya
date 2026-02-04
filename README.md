@@ -134,4 +134,4 @@ O **Valdarya** demonstra como a união de uma engine de alto desempenho com uma 
 
 A apresentação do projeto e a defesa técnica podem ser visualizadas através do link abaixo:
 
-📂 **[Acesse aqui o vídeo da defesa no Google Drive](https://drive.google.com/drive/folders/1CzO9SkC7qcMwMzi0bxWZTnsmw07yNWju?usp=sharing)**
+📂 **[Acesse aqui o vídeo da defesa no Google Drive](https://drive.google.com/file/d/1wHcn0MrfVxpsd-fWB5MfTMh9Hr3hurOZ/view?usp=drivesdk)**
